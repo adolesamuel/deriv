@@ -1,9 +1,10 @@
 import 'package:deriv/features/common/dropdown.dart';
+import 'package:deriv/features/price_tracker/app/cubit/get_price_cubit/get_tick_cubit.dart';
 import 'package:deriv/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../cubit/get_data_cubit.dart';
+import '../cubit/get_data_cubit/get_data_cubit.dart';
 
 class PriceTrackerPage extends StatefulWidget {
   const PriceTrackerPage({super.key});
@@ -19,12 +20,12 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
 //price.
 
   GetDataCubit getDataCubit = sl<GetDataCubit>();
+  GetTickCubit getPriceCubit = sl<GetTickCubit>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // getDataCubit = BlocProvider.of<GetDataCubit>(context);
       getDataCubit.getActiveSymbols();
     });
   }
@@ -37,6 +38,17 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
         print(state);
         if (state is ActiveSymbolsLoading) {
           return const Center(child: CircularProgressIndicator());
+        } else if (state is ActiveSymbolsFailure) {
+          return Center(
+            child: Column(
+              children: [
+                //
+                const Text('Error'),
+                const SizedBox(height: 20.0),
+                Text(state.failure.message),
+              ],
+            ),
+          );
         }
 
         return Container(
@@ -59,16 +71,15 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                   height: 32.0,
                 ),
                 SizedBox(
-                    width: 300,
-                    child: AppDropdown(
-                      hintText: 'Select an Asset',
-                      items: getDataCubit.selectedSymbols,
-                    )),
-                ElevatedButton(
-                    onPressed: () {
-                      getDataCubit.getActiveSymbols();
+                  width: 300,
+                  child: AppDropdown(
+                    hintText: 'Select an Asset',
+                    items: getDataCubit.selectedSymbols,
+                    onChanged: (value) {
+                      // getDataCubit.getPriceStream();
                     },
-                    child: const Text('Call Data')),
+                  ),
+                ),
               ],
             ),
           ),

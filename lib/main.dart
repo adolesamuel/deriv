@@ -1,7 +1,8 @@
+import 'package:deriv/features/price_tracker/app/cubit/get_price_cubit/get_tick_cubit.dart';
 import 'package:deriv/features/price_tracker/app/page/price_tracker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'features/price_tracker/app/cubit/get_data_cubit.dart';
+import 'features/price_tracker/app/cubit/get_data_cubit/get_data_cubit.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
@@ -16,11 +17,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     GetDataCubit getDataCubit = di.sl<GetDataCubit>();
+    GetTickCubit getTickCubit = di.sl<GetTickCubit>();
     return MultiBlocProvider(
       providers: [
         //GetDataCubit
         BlocProvider<GetDataCubit>(
           create: (context) => getDataCubit,
+        ),
+        BlocProvider<GetTickCubit>(
+          create: (context) => getTickCubit,
         ),
       ],
       child: MaterialApp(

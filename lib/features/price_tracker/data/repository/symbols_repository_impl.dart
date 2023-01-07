@@ -3,6 +3,7 @@ import 'package:deriv/features/price_tracker/data/sources/remote_source.dart';
 import 'package:deriv/features/price_tracker/domain/entity/active_symbol.dart';
 import 'package:deriv/core/failures/failure.dart';
 import 'package:dartz/dartz.dart';
+import 'package:deriv/features/price_tracker/domain/entity/tick.dart';
 import 'package:deriv/features/price_tracker/domain/repository/symbols_repository.dart';
 
 class AppSymbolsRepository implements SymbolsRepository {
@@ -20,6 +21,23 @@ class AppSymbolsRepository implements SymbolsRepository {
       yield* symbolsRemoteSource.streamActiveSymbols().map(
         (event) {
           return Right<Failure, List<ActiveSymbol>>(event);
+        },
+      ).handleError((e) {
+        final failure = CommonFailure('Unknown Failure', e.toString());
+        return Left(failure);
+      });
+    } else {
+      yield const Left(
+          CommonFailure('No Internet Access', 'Please connect to a Network'));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, Tick>> streamTicks(String symbol) async* {
+    if (await networkInfo.isConnected) {
+      yield* symbolsRemoteSource.streamPrice(symbol).map(
+        (event) {
+          return Right<Failure, Tick>(event);
         },
       ).handleError((e) {
         final failure = CommonFailure('Unknown Failure', e.toString());

@@ -2,10 +2,14 @@ import 'dart:convert';
 
 import 'package:deriv/core/api/endpoints.dart';
 import 'package:deriv/features/price_tracker/data/models/active_symbol_model.dart';
+import 'package:deriv/features/price_tracker/data/models/tick_model.dart';
+import 'package:deriv/features/price_tracker/domain/entity/active_symbol.dart';
+import 'package:deriv/features/price_tracker/domain/entity/tick.dart';
 import 'package:web_socket_channel/io.dart';
 
 abstract class SymbolsRemoteSource {
-  Stream<List<ActiveSymbolModel>> streamActiveSymbols();
+  Stream<List<ActiveSymbol>> streamActiveSymbols();
+  Stream<Tick> streamPrice(String symbol);
 }
 
 class AppSymbolsRemoteSource implements SymbolsRemoteSource {
@@ -19,7 +23,6 @@ class AppSymbolsRemoteSource implements SymbolsRemoteSource {
         json.encode({"active_symbols": "brief", "product_type": "basic"});
     channel.sink.add(query);
     Stream.periodic(const Duration(seconds: 20), (_) {
-      print('making another sink addittion');
       channel.sink.add(query);
     });
 
@@ -28,6 +31,24 @@ class AppSymbolsRemoteSource implements SymbolsRemoteSource {
       final List activeSymbols = data["active_symbols"];
 
       return activeSymbols.map((e) => ActiveSymbolModel.fromJson(e)).toList();
+    });
+  }
+
+  @override
+  Stream<TickModel> streamPrice(String symbol) async* {
+    const url = Endpoint.derivSocketEndpoint;
+    final channel = IOWebSocketChannel.connect(url);
+
+    final query = json.encode({"ticks": symbol});
+
+    channel.sink.add(query);
+
+    yield* channel.stream.map((event) {
+      final data = json.decode(event);
+
+      final tick = data["tick"];
+
+      return TickModel.fromJson(tick);
     });
   }
 }
