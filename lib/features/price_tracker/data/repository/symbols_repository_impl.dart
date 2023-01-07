@@ -23,7 +23,7 @@ class AppSymbolsRepository implements SymbolsRepository {
         },
       ).handleError((e) {
         final failure = CommonFailure('Unknown Failure', e.toString());
-        return left(failure);
+        return Left(failure);
       });
     } else {
       yield const Left(

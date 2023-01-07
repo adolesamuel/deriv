@@ -15,11 +15,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    GetDataCubit getDataCubit = di.sl<GetDataCubit>();
     return MultiBlocProvider(
       providers: [
         //GetDataCubit
         BlocProvider<GetDataCubit>(
-          create: (context) => GetDataCubit(),
+          create: (context) => getDataCubit,
         ),
       ],
       child: MaterialApp(
