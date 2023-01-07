@@ -19,8 +19,6 @@ class AppSymbolsRepository implements SymbolsRepository {
     if (await networkInfo.isConnected) {
       yield* symbolsRemoteSource.streamActiveSymbols().map(
         (event) {
-          print('Got Data');
-          print(event);
           return Right<Failure, List<ActiveSymbol>>(event);
         },
       ).handleError((e) {

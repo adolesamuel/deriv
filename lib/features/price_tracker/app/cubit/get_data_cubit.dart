@@ -17,6 +17,9 @@ class GetDataCubit extends Cubit<GetDataState> {
   List<String> markets = [];
   List<ActiveSymbol> symbols = [];
 
+  //Symbols selected after user switches market toggle.
+  List<ActiveSymbol> selectedSymbols = [];
+
   //call the use case
 
   getActiveSymbols() {
@@ -39,5 +42,11 @@ class GetDataCubit extends Cubit<GetDataState> {
         emit(ActiveSymbolsFetched(r));
       });
     });
+  }
+
+  updateAssetList(String marketName) {
+    selectedSymbols = symbols
+        .where((element) => element.marketDisplayName == marketName)
+        .toList();
   }
 }

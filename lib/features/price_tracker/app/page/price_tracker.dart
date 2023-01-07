@@ -44,15 +44,26 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
           child: Center(
             child: Column(
               children: [
-                const SizedBox(
-                    width: 300,
-                    child: AppDropdown(hintText: 'Select a Market', items: [])),
+                SizedBox(
+                  width: 300,
+                  child: AppDropdown<String>(
+                    hintText: 'Select a Market',
+                    items: getDataCubit.markets,
+                    onChanged: (value) {
+                      getDataCubit.updateAssetList(value ?? '');
+                      setState(() {});
+                    },
+                  ),
+                ),
                 const SizedBox(
                   height: 32.0,
                 ),
-                const SizedBox(
+                SizedBox(
                     width: 300,
-                    child: AppDropdown(hintText: 'Select an Asset', items: [])),
+                    child: AppDropdown(
+                      hintText: 'Select an Asset',
+                      items: getDataCubit.selectedSymbols,
+                    )),
                 ElevatedButton(
                     onPressed: () {
                       getDataCubit.getActiveSymbols();

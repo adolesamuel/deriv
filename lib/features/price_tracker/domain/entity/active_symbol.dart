@@ -30,4 +30,9 @@ class ActiveSymbol {
     required this.symbol,
     required this.symbolType,
   });
+
+  @override
+  String toString() {
+    return symbol;
+  }
 }
