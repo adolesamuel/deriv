@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:deriv/core/api/endpoints.dart';
 import 'package:deriv/features/price_tracker/data/models/active_symbol_model.dart';
 import 'package:web_socket_channel/io.dart';
@@ -14,12 +16,16 @@ class AppSymbolsRemoteSource implements SymbolsRemoteSource {
     final channel = IOWebSocketChannel.connect(url);
 
     final query = {"active_symbols": "brief", "product_type": "basic"};
+    channel.sink.add(query);
     Stream.periodic(const Duration(seconds: 20), (_) {
       channel.sink.add(query);
     });
 
     yield* channel.stream.map((event) {
-      channel.sink.add(query);
+      final data = json.decode(event);
+      final List activeSymbols = data["active_symbols"];
+
+      return activeSymbols.map((e) => ActiveSymbolModel.fromJson(e)).toList();
     });
   }
 }
