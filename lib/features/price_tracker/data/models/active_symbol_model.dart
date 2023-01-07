@@ -1,39 +1,25 @@
+import 'package:deriv/features/price_tracker/domain/entity/active_symbol.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'active_symbol_model.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class ActiveSymbolModel {
-  final int allowForwardStarting;
-  final String displayName;
-  final int displayOrder;
-  final int exchangeIsOpen;
-  final int isTradingSuspended;
-  final String market;
-  final String marketDisplayName;
-  final double pip;
-  final String subgroup;
-  final String subgroupDisplayName;
-  final String submarket;
-  final String submarketDisplayName;
-  final String symbol;
-  final String symbolType;
-
+class ActiveSymbolModel extends ActiveSymbol {
   ActiveSymbolModel({
-    required this.allowForwardStarting,
-    required this.displayName,
-    required this.displayOrder,
-    required this.exchangeIsOpen,
-    required this.isTradingSuspended,
-    required this.market,
-    required this.marketDisplayName,
-    required this.pip,
-    required this.subgroup,
-    required this.subgroupDisplayName,
-    required this.submarket,
-    required this.submarketDisplayName,
-    required this.symbol,
-    required this.symbolType,
+    required super.allowForwardStarting,
+    required super.displayName,
+    required super.displayOrder,
+    required super.exchangeIsOpen,
+    required super.isTradingSuspended,
+    required super.market,
+    required super.marketDisplayName,
+    required super.pip,
+    required super.subgroup,
+    required super.subgroupDisplayName,
+    required super.submarket,
+    required super.submarketDisplayName,
+    required super.symbol,
+    required super.symbolType,
   });
 
   factory ActiveSymbolModel.fromJson(Map<String, dynamic> json) =>
