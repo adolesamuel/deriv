@@ -1,4 +1,6 @@
-class ActiveSymbol {
+import 'package:equatable/equatable.dart';
+
+class ActiveSymbol extends Equatable {
   final int allowForwardStarting;
   final String displayName;
   final int displayOrder;
@@ -14,7 +16,7 @@ class ActiveSymbol {
   final String symbol;
   final String symbolType;
 
-  ActiveSymbol({
+  const ActiveSymbol({
     required this.allowForwardStarting,
     required this.displayName,
     required this.displayOrder,
@@ -35,4 +37,7 @@ class ActiveSymbol {
   String toString() {
     return symbol;
   }
+
+  @override
+  List<Object?> get props => [symbol];
 }

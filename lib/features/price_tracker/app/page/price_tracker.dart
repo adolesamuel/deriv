@@ -24,6 +24,9 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
   GetDataCubit getDataCubit = sl<GetDataCubit>();
   GetTickCubit getTickCubit = sl<GetTickCubit>();
 
+  ActiveSymbol? activeSymbol;
+  String? selectedMarket;
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +40,6 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
     return BlocBuilder<GetDataCubit, GetDataState>(
       bloc: getDataCubit,
       builder: (context, state) {
-        print(state);
         if (state is ActiveSymbolsLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ActiveSymbolsFailure) {
@@ -59,10 +61,13 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                   width: 300,
                   child: AppDropdown<String>(
                     hintText: 'Select a Market',
+                    activeValue: selectedMarket,
                     items: getDataCubit.markets,
                     onChanged: (value) {
-                      getDataCubit.updateAssetList(value ?? '');
+                      selectedMarket = value;
                       setState(() {});
+                      getDataCubit.updateAssetList(value ?? '');
+                      activeSymbol = null;
                     },
                   ),
                 ),
@@ -78,7 +83,10 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                   child: AppDropdown<ActiveSymbol>(
                     hintText: 'Select an Asset',
                     items: getDataCubit.selectedSymbols,
+                    activeValue: activeSymbol,
                     onChanged: (value) {
+                      activeSymbol = value;
+                      setState(() {});
                       getTickCubit.getTickStream(value?.symbol ?? '');
                     },
                   ),
@@ -94,14 +102,14 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                         return const SizedBox(
                           height: 100,
                           width: 100,
-                          child: CircularProgressIndicator(),
+                          child: Center(child: CircularProgressIndicator()),
                         );
                       } else if (tickState is GetTickFailure) {
                         return FailureWidget(failure: tickState.failure);
                       } else if (tickState is GetTickSuccess) {
-                        print('Fetched');
                         return Text(
-                          tickState.tick.quote.toStringAsFixed(2),
+                          'Price: ${tickState.tick.quote.toStringAsFixed(2)}',
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                               fontSize: 30.0, fontWeight: FontWeight.bold),
                         );
@@ -128,11 +136,18 @@ class FailureWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //
-          const Text('Error'),
+          const Text(
+            'Error',
+            style: TextStyle(fontSize: 20.0),
+          ),
           const SizedBox(height: 20.0),
-          Text(failure.message),
+          Text(
+            failure.message,
+            style: const TextStyle(fontSize: 20.0),
+          ),
         ],
       ),
     );

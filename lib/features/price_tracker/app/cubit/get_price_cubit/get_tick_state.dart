@@ -21,4 +21,7 @@ class GetTickSuccess extends GetTickState {
   final Tick tick;
 
   const GetTickSuccess(this.tick);
+
+  @override
+  List<Object> get props => [tick.quote];
 }
