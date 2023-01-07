@@ -1,9 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:deriv/core/usecase/usecase.dart';
 import 'package:deriv/features/price_tracker/domain/usecases/get_symbols_usecase.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../../core/failures/failure.dart';
-import '../../../domain/entity/active_symbol.dart';
+import '../../domain/entity/active_symbol.dart';
 
 part 'get_data_state.dart';
 
@@ -20,8 +21,9 @@ class GetDataCubit extends Cubit<GetDataState> {
   getActiveSymbols() async {
     emit(ActiveSymbolsLoading());
 
-    //get all unrepeated markets from symbols.
-
-    //emit active symbol error or success.
+    getSymbols.call(NoParams()).listen((event) {
+      event.fold((l) => emit(ActiveSymbolsFailure(l)),
+          (r) => emit(ActiveSymbolsFetched(r)));
+    });
   }
 }

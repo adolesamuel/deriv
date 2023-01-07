@@ -1,7 +1,7 @@
-import 'package:deriv/features/price_tracker/app/bloc/cubit/get_data_cubit.dart';
 import 'package:deriv/features/price_tracker/app/page/price_tracker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'features/price_tracker/app/cubit/get_data_cubit.dart';
 import 'injection_container.dart' as di;
 
 void main() async {

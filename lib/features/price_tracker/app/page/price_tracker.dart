@@ -1,7 +1,9 @@
 import 'package:deriv/features/common/dropdown.dart';
-import 'package:deriv/features/price_tracker/app/bloc/cubit/get_data_cubit.dart';
+import 'package:deriv/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/get_data_cubit.dart';
 
 class PriceTrackerPage extends StatefulWidget {
   const PriceTrackerPage({super.key});
@@ -15,6 +17,14 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
 //load list of assets
 //use list of assets to load
 //price.
+
+  GetDataCubit getDataCubit = sl<GetDataCubit>();
+
+  @override
+  void initState() {
+    super.initState();
+    getDataCubit.getActiveSymbols();
+  }
 
   @override
   Widget build(BuildContext context) {
