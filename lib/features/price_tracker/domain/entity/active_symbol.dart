@@ -16,7 +16,7 @@ class ActiveSymbol extends Equatable {
   final String symbol;
   final String symbolType;
 
-  ActiveSymbol({
+  const ActiveSymbol({
     required this.allowForwardStarting,
     required this.displayName,
     required this.displayOrder,

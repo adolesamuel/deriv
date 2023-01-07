@@ -40,8 +40,6 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
     return BlocBuilder<GetDataCubit, GetDataState>(
       bloc: getDataCubit,
       builder: (context, state) {
-        print(state);
-        print(activeSymbol);
         if (state is ActiveSymbolsLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ActiveSymbolsFailure) {
@@ -109,7 +107,6 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                       } else if (tickState is GetTickFailure) {
                         return FailureWidget(failure: tickState.failure);
                       } else if (tickState is GetTickSuccess) {
-                        print('Fetched');
                         return Text(
                           'Price: ${tickState.tick.quote.toStringAsFixed(2)}',
                           textAlign: TextAlign.center,
@@ -139,11 +136,18 @@ class FailureWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //
-          const Text('Error'),
+          const Text(
+            'Error',
+            style: TextStyle(fontSize: 20.0),
+          ),
           const SizedBox(height: 20.0),
-          Text(failure.message),
+          Text(
+            failure.message,
+            style: const TextStyle(fontSize: 20.0),
+          ),
         ],
       ),
     );

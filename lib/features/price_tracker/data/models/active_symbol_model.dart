@@ -5,7 +5,7 @@ part 'active_symbol_model.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ActiveSymbolModel extends ActiveSymbol {
-  ActiveSymbolModel({
+  const ActiveSymbolModel({
     required super.allowForwardStarting,
     required super.displayName,
     required super.displayOrder,
