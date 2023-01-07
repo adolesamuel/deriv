@@ -14,16 +14,30 @@ class GetDataCubit extends Cubit<GetDataState> {
     required this.getSymbols,
   }) : super(GetDataInitial());
 
+  List<String> markets = [];
   List<ActiveSymbol> symbols = [];
 
   //call the use case
 
-  getActiveSymbols() async {
+  getActiveSymbols() {
     emit(ActiveSymbolsLoading());
 
     getSymbols.call(NoParams()).listen((event) {
-      event.fold((l) => emit(ActiveSymbolsFailure(l)),
-          (r) => emit(ActiveSymbolsFetched(r)));
+      event.fold((l) => emit(ActiveSymbolsFailure(l)), (r) {
+        //create market from list of symbols/
+
+        for (ActiveSymbol symbol in r) {
+          if (markets.contains(symbol.marketDisplayName)) {
+            continue;
+          } else {
+            markets.add(symbol.marketDisplayName);
+          }
+        }
+
+        symbols = r;
+
+        emit(ActiveSymbolsFetched(r));
+      });
     });
   }
 }

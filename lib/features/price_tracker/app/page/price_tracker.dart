@@ -23,31 +23,41 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
   @override
   void initState() {
     super.initState();
-    getDataCubit.getActiveSymbols();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      // getDataCubit = BlocProvider.of<GetDataCubit>(context);
+      getDataCubit.getActiveSymbols();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GetDataCubit, GetDataState>(
+      bloc: getDataCubit,
       builder: (context, state) {
+        print(state);
         if (state is ActiveSymbolsLoading) {
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         }
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 64.0),
           child: Center(
             child: Column(
-              children: const [
-                SizedBox(
+              children: [
+                const SizedBox(
                     width: 300,
                     child: AppDropdown(hintText: 'Select a Market', items: [])),
-                SizedBox(
+                const SizedBox(
                   height: 32.0,
                 ),
-                SizedBox(
+                const SizedBox(
                     width: 300,
                     child: AppDropdown(hintText: 'Select an Asset', items: [])),
+                ElevatedButton(
+                    onPressed: () {
+                      getDataCubit.getActiveSymbols();
+                    },
+                    child: const Text('Call Data')),
               ],
             ),
           ),

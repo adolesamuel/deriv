@@ -11,6 +11,7 @@ class GetSymbols extends Usecase<List<ActiveSymbol>, NoParams> {
 
   @override
   Stream<Either<Failure, List<ActiveSymbol>>> call(NoParams params) async* {
+    print('usecase running');
     yield* symbolsRepository.streamActiveSymbols();
   }
 }

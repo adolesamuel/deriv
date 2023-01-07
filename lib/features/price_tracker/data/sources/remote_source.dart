@@ -15,9 +15,11 @@ class AppSymbolsRemoteSource implements SymbolsRemoteSource {
 
     final channel = IOWebSocketChannel.connect(url);
 
-    final query = {"active_symbols": "brief", "product_type": "basic"};
+    final query =
+        json.encode({"active_symbols": "brief", "product_type": "basic"});
     channel.sink.add(query);
     Stream.periodic(const Duration(seconds: 20), (_) {
+      print('making another sink addittion');
       channel.sink.add(query);
     });
 
