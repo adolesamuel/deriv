@@ -1,5 +1,7 @@
+import 'package:deriv/core/failures/failure.dart';
 import 'package:deriv/features/common/dropdown.dart';
 import 'package:deriv/features/price_tracker/app/cubit/get_price_cubit/get_tick_cubit.dart';
+import 'package:deriv/features/price_tracker/domain/entity/active_symbol.dart';
 import 'package:deriv/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +22,7 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
 //price.
 
   GetDataCubit getDataCubit = sl<GetDataCubit>();
-  GetTickCubit getPriceCubit = sl<GetTickCubit>();
+  GetTickCubit getTickCubit = sl<GetTickCubit>();
 
   @override
   void initState() {
@@ -39,23 +41,20 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
         if (state is ActiveSymbolsLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ActiveSymbolsFailure) {
-          return Center(
-            child: Column(
-              children: [
-                //
-                const Text('Error'),
-                const SizedBox(height: 20.0),
-                Text(state.failure.message),
-              ],
-            ),
+          return FailureWidget(
+            failure: state.failure,
           );
         }
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 64.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 64.0,
+          ),
           child: Center(
             child: Column(
               children: [
+                //
                 SizedBox(
                   width: 300,
                   child: AppDropdown<String>(
@@ -67,24 +66,75 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                     },
                   ),
                 ),
+
+                //
                 const SizedBox(
                   height: 32.0,
                 ),
+
+                //
                 SizedBox(
                   width: 300,
-                  child: AppDropdown(
+                  child: AppDropdown<ActiveSymbol>(
                     hintText: 'Select an Asset',
                     items: getDataCubit.selectedSymbols,
                     onChanged: (value) {
-                      // getDataCubit.getPriceStream();
+                      getTickCubit.getTickStream(value?.symbol ?? '');
                     },
                   ),
                 ),
+
+                const SizedBox(
+                  height: 32.0,
+                ),
+                BlocBuilder<GetTickCubit, GetTickState>(
+                    bloc: getTickCubit,
+                    builder: (context, tickState) {
+                      if (tickState is GetTickLoading) {
+                        return const SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (tickState is GetTickFailure) {
+                        return FailureWidget(failure: tickState.failure);
+                      } else if (tickState is GetTickSuccess) {
+                        print('Fetched');
+                        return Text(
+                          tickState.tick.quote.toStringAsFixed(2),
+                          style: const TextStyle(
+                              fontSize: 30.0, fontWeight: FontWeight.bold),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }),
               ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class FailureWidget extends StatelessWidget {
+  final Failure failure;
+  const FailureWidget({
+    Key? key,
+    required this.failure,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          //
+          const Text('Error'),
+          const SizedBox(height: 20.0),
+          Text(failure.message),
+        ],
+      ),
     );
   }
 }
