@@ -107,11 +107,18 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                       } else if (tickState is GetTickFailure) {
                         return FailureWidget(failure: tickState.failure);
                       } else if (tickState is GetTickSuccess) {
-                        return Text(
-                          'Price: ${tickState.tick.quote.toStringAsFixed(2)}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 30.0, fontWeight: FontWeight.bold),
+                        return SizedBox(
+                          width: 300,
+                          child: Center(
+                            child: Text(
+                              'Price: ${tickState.tick.quote.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                color: getTickCubit.determineColor(),
+                              ),
+                            ),
+                          ),
                         );
                       }
                       return const SizedBox.shrink();
