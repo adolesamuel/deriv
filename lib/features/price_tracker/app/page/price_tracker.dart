@@ -2,6 +2,7 @@ import 'package:deriv/core/failures/failure.dart';
 import 'package:deriv/features/common/dropdown.dart';
 import 'package:deriv/features/price_tracker/app/cubit/get_price_cubit/get_tick_cubit.dart';
 import 'package:deriv/features/price_tracker/domain/entity/active_symbol.dart';
+import 'package:deriv/features/price_tracker/domain/entity/tick.dart';
 import 'package:deriv/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,11 +27,12 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
 
   ActiveSymbol? activeSymbol;
   String? selectedMarket;
+  Tick? activeTick;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       getDataCubit.getActiveSymbols();
     });
   }
@@ -87,7 +89,8 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                     onChanged: (value) {
                       activeSymbol = value;
                       setState(() {});
-                      getTickCubit.getTickStream(value?.symbol ?? '');
+                      getTickCubit.getTickStream(
+                          activeTick, value?.symbol ?? '');
                     },
                   ),
                 ),
@@ -107,11 +110,24 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                       } else if (tickState is GetTickFailure) {
                         return FailureWidget(failure: tickState.failure);
                       } else if (tickState is GetTickSuccess) {
-                        return Text(
-                          'Price: ${tickState.tick.quote.toStringAsFixed(2)}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 30.0, fontWeight: FontWeight.bold),
+                        activeTick = tickState.tick;
+                        return SizedBox(
+                          width: 300,
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Text(activeTick?.symbol ?? ''),
+                                Text(
+                                  'Price: ${tickState.tick.quote.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontSize: 30.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: getTickCubit.determineColor(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         );
                       }
                       return const SizedBox.shrink();

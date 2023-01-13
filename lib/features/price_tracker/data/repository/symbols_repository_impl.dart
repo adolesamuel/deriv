@@ -1,8 +1,8 @@
+import 'package:dartz/dartz.dart';
+import 'package:deriv/core/failures/failure.dart';
 import 'package:deriv/core/network_info/network_info.dart';
 import 'package:deriv/features/price_tracker/data/sources/remote_source.dart';
 import 'package:deriv/features/price_tracker/domain/entity/active_symbol.dart';
-import 'package:deriv/core/failures/failure.dart';
-import 'package:dartz/dartz.dart';
 import 'package:deriv/features/price_tracker/domain/entity/tick.dart';
 import 'package:deriv/features/price_tracker/domain/repository/symbols_repository.dart';
 
@@ -33,9 +33,10 @@ class AppSymbolsRepository implements SymbolsRepository {
   }
 
   @override
-  Stream<Either<Failure, Tick>> streamTicks(String symbol) async* {
+  Stream<Either<Failure, Tick>> streamTicks(
+      Tick? oldTick, String symbol) async* {
     if (await networkInfo.isConnected) {
-      yield* symbolsRemoteSource.streamPrice(symbol).map(
+      yield* symbolsRemoteSource.streamPrice(oldTick, symbol).map(
         (event) {
           return Right<Failure, Tick>(event);
         },

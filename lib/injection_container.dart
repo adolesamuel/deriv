@@ -1,5 +1,3 @@
-//
-//Calling this GetIt.Instance sl i.e Service Locator
 import 'package:deriv/core/network_info/network_info.dart';
 import 'package:deriv/features/price_tracker/app/cubit/get_price_cubit/get_tick_cubit.dart';
 import 'package:deriv/features/price_tracker/data/repository/symbols_repository_impl.dart';
@@ -11,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'features/price_tracker/app/cubit/get_data_cubit/get_data_cubit.dart';
 import 'features/price_tracker/data/sources/remote_source.dart';
 
+//Calling this GetIt.Instance sl i.e Service Locator
 final sl = GetIt.instance;
 
 Future<void> init() async {

@@ -11,12 +11,13 @@ class GetTick extends Usecase<Tick, TickParams> {
 
   @override
   Stream<Either<Failure, Tick>> call(TickParams params) async* {
-    yield* symbolsRepository.streamTicks(params.symbol);
+    yield* symbolsRepository.streamTicks(params.oldTick, params.symbol);
   }
 }
 
 class TickParams {
+  final Tick? oldTick;
   final String symbol;
 
-  TickParams(this.symbol);
+  TickParams(this.oldTick, this.symbol);
 }
