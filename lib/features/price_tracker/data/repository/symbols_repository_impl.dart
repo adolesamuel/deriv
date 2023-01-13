@@ -33,9 +33,10 @@ class AppSymbolsRepository implements SymbolsRepository {
   }
 
   @override
-  Stream<Either<Failure, Tick>> streamTicks(String symbol) async* {
+  Stream<Either<Failure, Tick>> streamTicks(
+      Tick? oldTick, String symbol) async* {
     if (await networkInfo.isConnected) {
-      yield* symbolsRemoteSource.streamPrice(symbol).map(
+      yield* symbolsRemoteSource.streamPrice(oldTick, symbol).map(
         (event) {
           return Right<Failure, Tick>(event);
         },

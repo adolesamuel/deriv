@@ -19,10 +19,10 @@ class GetTickCubit extends Cubit<GetTickState> {
   ///This list takes only two items.
   List<double> priceList = [0, 0];
 
-  getTickStream(String symbol) {
+  getTickStream(Tick? oldTick, String symbol) {
     emit(GetTickLoading());
 
-    getTick.call(TickParams(symbol)).listen((event) {
+    getTick.call(TickParams(oldTick, symbol)).listen((event) {
       event.fold((l) => emit(GetTickFailure(l)), (r) {
         tick = r;
         renewPriceList(r.quote);
