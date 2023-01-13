@@ -1,8 +1,8 @@
+import 'package:dartz/dartz.dart';
+import 'package:deriv/core/failures/failure.dart';
 import 'package:deriv/core/network_info/network_info.dart';
 import 'package:deriv/features/price_tracker/data/sources/remote_source.dart';
 import 'package:deriv/features/price_tracker/domain/entity/active_symbol.dart';
-import 'package:deriv/core/failures/failure.dart';
-import 'package:dartz/dartz.dart';
 import 'package:deriv/features/price_tracker/domain/entity/tick.dart';
 import 'package:deriv/features/price_tracker/domain/repository/symbols_repository.dart';
 
@@ -47,5 +47,11 @@ class AppSymbolsRepository implements SymbolsRepository {
       yield const Left(
           CommonFailure('No Internet Access', 'Please connect to a Network'));
     }
+  }
+
+  @override
+  Stream<Either<Failure, void>> endTicks(Tick tick) async* {
+    //
+    symbolsRemoteSource.endPriceStream(tick);
   }
 }

@@ -10,6 +10,7 @@ import 'package:web_socket_channel/io.dart';
 abstract class SymbolsRemoteSource {
   Stream<List<ActiveSymbol>> streamActiveSymbols();
   Stream<Tick> streamPrice(String symbol);
+  Stream<void> endPriceStream(Tick tick);
 }
 
 class AppSymbolsRemoteSource implements SymbolsRemoteSource {
@@ -37,6 +38,7 @@ class AppSymbolsRemoteSource implements SymbolsRemoteSource {
   @override
   Stream<TickModel> streamPrice(String symbol) async* {
     const url = Endpoint.derivSocketEndpoint;
+
     final channel = IOWebSocketChannel.connect(url);
 
     final query = json.encode({"ticks": symbol});
@@ -45,10 +47,35 @@ class AppSymbolsRemoteSource implements SymbolsRemoteSource {
 
     yield* channel.stream.map((event) {
       final data = json.decode(event);
+      print(data['tick']['symbol']);
+      print(runtimeType.hashCode);
+
+      //Forget noisy old streams.
+      if (data["echo_req"]["ticks"] != symbol) {
+        print('removing query');
+        final forgetQuery = json.encode({"forget": data["tick"]["id"]});
+
+        channel.sink.add(forgetQuery);
+      }
 
       final tick = data["tick"];
 
       return TickModel.fromJson(tick);
     });
+  }
+
+  @override
+  Stream<void> endPriceStream(Tick tick) async* {
+    const url = Endpoint.derivSocketEndpoint;
+
+    final channel = IOWebSocketChannel.connect(url);
+
+    channel.stream.listen(
+      (event) {
+        final forgetQuery = json.encode({"forget": tick.id});
+
+        channel.sink.add(forgetQuery);
+      },
+    );
   }
 }

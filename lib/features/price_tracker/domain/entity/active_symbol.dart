@@ -35,7 +35,7 @@ class ActiveSymbol extends Equatable {
 
   @override
   String toString() {
-    return symbol;
+    return displayName;
   }
 
   @override

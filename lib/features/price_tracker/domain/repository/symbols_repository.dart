@@ -6,4 +6,5 @@ import 'package:deriv/features/price_tracker/domain/entity/tick.dart';
 abstract class SymbolsRepository {
   Stream<Either<Failure, List<ActiveSymbol>>> streamActiveSymbols();
   Stream<Either<Failure, Tick>> streamTicks(String symbol);
+  Stream<Either<Failure, void>> endTicks(Tick tick);
 }
