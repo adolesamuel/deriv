@@ -1,6 +1,5 @@
 import 'package:deriv/core/failures/failure.dart';
 import 'package:deriv/features/common/dropdown.dart';
-import 'package:deriv/features/price_tracker/app/cubit/end_ticks_cubit/endticks_cubit.dart';
 import 'package:deriv/features/price_tracker/app/cubit/get_price_cubit/get_tick_cubit.dart';
 import 'package:deriv/features/price_tracker/domain/entity/active_symbol.dart';
 import 'package:deriv/features/price_tracker/domain/entity/tick.dart';
@@ -25,7 +24,6 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
 
   GetDataCubit getDataCubit = sl<GetDataCubit>();
   GetTickCubit getTickCubit = sl<GetTickCubit>();
-  EndticksCubit endticksCubit = sl<EndticksCubit>();
 
   ActiveSymbol? activeSymbol;
   String? selectedMarket;
@@ -34,7 +32,7 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       getDataCubit.getActiveSymbols();
     });
   }
@@ -91,10 +89,6 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                     onChanged: (value) {
                       activeSymbol = value;
                       setState(() {});
-                      print(activeTick?.symbol);
-                      // if (activeTick != null) {
-                      //   endticksCubit.stopTicks(activeTick!);
-                      // }
                       getTickCubit.getTickStream(
                           activeTick, value?.symbol ?? '');
                     },
@@ -117,7 +111,6 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
                         return FailureWidget(failure: tickState.failure);
                       } else if (tickState is GetTickSuccess) {
                         activeTick = tickState.tick;
-                        print(activeTick?.quote.toString());
                         return SizedBox(
                           width: 300,
                           child: Center(

@@ -49,10 +49,4 @@ class AppSymbolsRepository implements SymbolsRepository {
           CommonFailure('No Internet Access', 'Please connect to a Network'));
     }
   }
-
-  @override
-  Stream<Either<Failure, void>> endTicks(Tick tick) async* {
-    //
-    symbolsRemoteSource.endPriceStream(tick);
-  }
 }
