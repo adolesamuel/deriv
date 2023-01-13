@@ -20,9 +20,15 @@ class AppSymbolsRemoteSource implements SymbolsRemoteSource {
       : channel = IOWebSocketChannel.connect(Endpoint.derivSocketEndpoint),
         isClosed = false;
 
-  _connectSocket() {
+  void _connectSocket() {
     channel = IOWebSocketChannel.connect(Endpoint.derivSocketEndpoint);
-    isClosed = true;
+    isClosed = false;
+  }
+
+  void _closeSocket() {
+    channel.sink.close().then((value) {
+      isClosed = true;
+    });
   }
 
   @override
@@ -34,11 +40,9 @@ class AppSymbolsRemoteSource implements SymbolsRemoteSource {
     yield* channel.stream.map((event) {
       final data = json.decode(event);
       final List activeSymbols = data["active_symbols"];
+      _closeSocket();
 
       return activeSymbols.map((e) => ActiveSymbolModel.fromJson(e)).toList();
-    });
-    channel.sink.close().then((value) {
-      isClosed = true;
     });
   }
 
